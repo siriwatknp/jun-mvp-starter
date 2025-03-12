@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description:
     "Go production in minutes with Next.js, Line Login, and Firebase",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "https://jun-stack.vercel.app"
+    process.env.NEXT_PUBLIC_APP_URL || "https://jun-mvp-starter.web.app"
   ),
   openGraph: {
     type: "website",
