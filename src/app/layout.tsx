@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       "Go production in minutes with Next.js, Line Login, and Firebase",
     images: [
       {
-        url: "/banner.jpg",
+        url: "/banner.png",
         width: 1200,
         height: 630,
         alt: "Jun MVP Starter - Go production in minutes",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "Jun MVP Starter",
     description:
       "Go production in minutes with Next.js, Line Login, and Firebase",
-    images: ["/banner.jpg"],
+    images: ["/banner.png"],
     creator: "@siriwatknp",
   },
   other: {
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     "line:title": "Jun MVP Starter",
     "line:description":
       "Go production in minutes with Next.js, Line Login, and Firebase",
-    "line:image": "/banner.jpg",
+    "line:image": "/banner.png",
   },
 };
 
