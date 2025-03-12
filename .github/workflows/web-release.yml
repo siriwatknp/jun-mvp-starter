@@ -28,6 +28,10 @@ jobs:
           node-version: 20
           cache: npm
 
+      # temporary workaround for prevent Next.js "Checking validity of types" when build
+      - name: Delete functions folder
+        run: rm -rf functions/
+
       - name: Install & Build
         run: npm ci && npm run build
         env:

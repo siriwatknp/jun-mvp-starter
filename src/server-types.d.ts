@@ -1,4 +1,4 @@
-import { authenticateLineUser } from "./functions/src";
+import { authenticateLineUser } from "../functions/src";
 
 export interface CallableRequest<T> {
   /**

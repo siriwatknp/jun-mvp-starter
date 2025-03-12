@@ -11,7 +11,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import type {
   AuthenticateLineUserParams,
   AuthenticateLineUserResult,
-} from "../../server-types";
+} from "../server-types";
 
 // Your Firebase configuration
 const firebaseConfig = {
