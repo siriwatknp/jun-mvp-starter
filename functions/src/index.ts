@@ -6,6 +6,7 @@ import {
   HttpsError,
   CallableRequest,
 } from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
 
 // Initialize Firebase Admin
 initializeApp();
@@ -120,7 +121,7 @@ async function verifyLineToken(idToken: string): Promise<LineProfile> {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    console.error("LINE API error response:", errorBody);
+    logger.error("LINE API error response:", errorBody);
     throw new HttpsError("internal", errorBody);
   }
 
