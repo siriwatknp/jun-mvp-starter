@@ -57,14 +57,14 @@ exports.authenticateLineUser = functions.https.onCall(async (data, context) => {
       await userRef.set({
         uid: uid,
         displayName: lineProfile.displayName,
-        photoURL: lineProfile.pictureUrl,
+        pictureUrl: lineProfile.pictureUrl,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         lastLogin: admin.firestore.FieldValue.serverTimestamp(),
         providers: {
           line: {
             userId: lineProfile.userId,
             displayName: lineProfile.displayName,
-            photoURL: lineProfile.pictureUrl,
+            pictureUrl: lineProfile.pictureUrl,
             email: lineProfile.email || null,
             lastLogin: admin.firestore.FieldValue.serverTimestamp(),
             linkedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -75,12 +75,12 @@ exports.authenticateLineUser = functions.https.onCall(async (data, context) => {
       // Update existing user document
       await userRef.update({
         displayName: lineProfile.displayName,
-        photoURL: lineProfile.pictureUrl,
+        pictureUrl: lineProfile.pictureUrl,
         lastLogin: admin.firestore.FieldValue.serverTimestamp(),
         "providers.line": {
           userId: lineProfile.userId,
           displayName: lineProfile.displayName,
-          photoURL: lineProfile.pictureUrl,
+          pictureUrl: lineProfile.pictureUrl,
           email: lineProfile.email || null,
           lastLogin: admin.firestore.FieldValue.serverTimestamp(),
           linkedAt:
@@ -96,7 +96,7 @@ exports.authenticateLineUser = functions.https.onCall(async (data, context) => {
       userProfile: {
         uid,
         displayName: lineProfile.displayName,
-        photoURL: lineProfile.pictureUrl,
+        pictureUrl: lineProfile.pictureUrl,
       },
     };
   } catch (error) {
@@ -179,7 +179,7 @@ The user data in Firestore follows this schema for multi-provider support:
 {
   uid: "line:line_user_id",              // Prefixed UID for provider identification
   displayName: "User Display Name",      // User's primary display name
-  photoURL: "https://...",               // Profile photo URL
+  pictureUrl: "https://...",               // Profile photo URL
   createdAt: timestamp,                  // Account creation timestamp
   lastLogin: timestamp,                  // Last login timestamp
 
@@ -188,7 +188,7 @@ The user data in Firestore follows this schema for multi-provider support:
     line: {
       userId: "line_user_id",            // LINE user ID
       displayName: "LINE Display Name",  // Name from LINE
-      photoURL: "https://...",           // Photo from LINE
+      pictureUrl: "https://...",           // Photo from LINE
       email: "line_email@example.com",   // Email if available
       lastLogin: timestamp,              // Last LINE login
       linkedAt: timestamp                // When LINE was first linked

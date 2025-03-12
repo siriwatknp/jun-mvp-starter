@@ -1,6 +1,6 @@
 {
   "projects": {
-    "production": "familee-magic"
+    "default": "jun-mvp-starter"
   },
   "targets": {},
   "etags": {}

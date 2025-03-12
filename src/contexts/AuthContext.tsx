@@ -54,14 +54,14 @@ type LineProfile = Awaited<ReturnType<Liff["getProfile"]>>;
 type UserData = {
   uid: string;
   displayName: string;
-  photoURL?: string;
+  pictureUrl?: string;
   createdAt: Timestamp;
   lastLogin: Timestamp;
   providers: {
     line?: {
       userId: string;
       displayName: string;
-      photoURL?: string;
+      pictureUrl?: string;
       email?: string | null;
       lastLogin: Timestamp;
       linkedAt: Timestamp;
@@ -89,7 +89,13 @@ function useLineLogin() {
   useEffect(() => {
     const init = async () => {
       try {
-        await liff.init({ liffId: process.env.NEXT_PUBLIC_LINE_LIFF_ID || "" });
+        const LIFF_ID = process.env.NEXT_PUBLIC_LINE_LIFF_ID!;
+        if (process.env.NODE_ENV === "development") {
+          if (!LIFF_ID) {
+            console.error("LIFF_ID should not be empty!");
+          }
+        }
+        await liff.init({ liffId: LIFF_ID });
         setLiffState("success");
         if (liff.isLoggedIn()) {
           try {

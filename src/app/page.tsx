@@ -12,7 +12,15 @@ import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Dashboard() {
-  const { login, logout, shouldShowLogin, authStatus, userProfile } = useAuth();
+  const {
+    login,
+    logout,
+    shouldShowLogin,
+    authStatus,
+    lineProfile,
+    userProfile,
+  } = useAuth();
+  const profile = userProfile || lineProfile;
   return (
     <div className="jun-layout jun-layout-noTransition">
       <div className="jun-header jun-header-h-[64px] jun-header-clip-left px-4 md:px-4">
@@ -47,22 +55,19 @@ export default function Dashboard() {
               Log in
             </button>
           )}
-          {authStatus === "authenticating" && (
+          {authStatus === "authenticating" && !profile && (
             <Avatar className="h-9 w-9 bg-neutral-200"></Avatar>
           )}
-          {userProfile && (
+          {profile && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-9 w-9 cursor-pointer">
                   <AvatarImage
-                    src={
-                      userProfile.photoURL ||
-                      userProfile.providers?.line?.photoURL
-                    }
-                    alt={userProfile.displayName}
+                    src={profile.pictureUrl}
+                    alt={profile.displayName}
                   />
                   <AvatarFallback>
-                    {userProfile.displayName.substring(0, 2).toUpperCase()}
+                    {profile.displayName.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -72,10 +77,12 @@ export default function Dashboard() {
                 sideOffset={5}
               >
                 <div className="px-4 py-3">
-                  <div className="font-medium">{userProfile.displayName}</div>
-                  <div className="text-xs text-gray-500 truncate">
-                    {userProfile.providers?.line?.email || "LINE User"}
-                  </div>
+                  <div className="font-medium">{profile.displayName}</div>
+                  {userProfile && (
+                    <div className="text-xs text-gray-500 truncate">
+                      {userProfile.providers?.line?.email || "LINE User"}
+                    </div>
+                  )}
                 </div>
                 <DropdownMenuSeparator className="bg-gray-200" />
                 <DropdownMenuItem

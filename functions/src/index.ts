@@ -57,14 +57,14 @@ export const authenticateLineUser = onCall(
         await userRef.set({
           uid: uid,
           displayName: lineProfile.name,
-          photoURL: lineProfile.picture,
+          pictureUrl: lineProfile.picture,
           createdAt: FieldValue.serverTimestamp(),
           lastLogin: FieldValue.serverTimestamp(),
           providers: {
             line: {
               userId: lineProfile.sub,
               displayName: lineProfile.name,
-              photoURL: lineProfile.picture,
+              pictureUrl: lineProfile.picture,
               email: lineProfile.email || null,
               lastLogin: FieldValue.serverTimestamp(),
               linkedAt: FieldValue.serverTimestamp(),
@@ -75,12 +75,12 @@ export const authenticateLineUser = onCall(
         // Update existing user document
         await userRef.update({
           displayName: lineProfile.name,
-          photoURL: lineProfile.picture,
+          pictureUrl: lineProfile.picture,
           lastLogin: FieldValue.serverTimestamp(),
           "providers.line": {
             userId: lineProfile.sub,
             displayName: lineProfile.name,
-            photoURL: lineProfile.picture,
+            pictureUrl: lineProfile.picture,
             email: lineProfile.email || null,
             lastLogin: FieldValue.serverTimestamp(),
             linkedAt:
@@ -97,7 +97,7 @@ export const authenticateLineUser = onCall(
         userProfile: {
           uid,
           displayName: lineProfile.name,
-          photoURL: lineProfile.picture,
+          pictureUrl: lineProfile.picture,
         },
       };
     } catch (error) {

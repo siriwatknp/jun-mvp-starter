@@ -11,6 +11,7 @@ on:
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
+
     # https://github.com/FirebaseExtended/action-hosting-deploy/issues/321
     # permission for bot comment
     permissions:
@@ -43,18 +44,21 @@ jobs:
         run: |
           echo "pr_number=${{ fromJson(steps.get_pr_data.outputs.result).number }}" >> "$GITHUB_OUTPUT"
 
-      - name: Install the dependencies
-        run: npm install --ci
+      - name: Install & Build
+        run: npm install --ci && npm run build
         env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
-
-      - name: Build the application
-        run: npm run build
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+          NEXT_PUBLIC_LINE_LIFF_ID: ${{ secrets.NEXT_PUBLIC_LINE_LIFF_ID }}
 
       - uses: FirebaseExtended/action-hosting-deploy@v0.9.0
         with:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          projectId: "${{ secrets.FIREBASE_PROJECT_ID }}"
+          projectId: "${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}"
           channelId: PR-${{steps.save_version.outputs.pr_number}}
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           expires: 30d

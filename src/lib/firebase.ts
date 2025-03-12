@@ -5,19 +5,9 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   User,
-  connectAuthEmulator,
 } from "firebase/auth";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  connectFirestoreEmulator,
-} from "firebase/firestore";
-import {
-  getFunctions,
-  httpsCallable,
-  connectFunctionsEmulator,
-} from "firebase/functions";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import type {
   AuthenticateLineUserParams,
   AuthenticateLineUserResult,
@@ -42,14 +32,22 @@ const functions = getFunctions(app, "asia-southeast1");
 
 // Connect to emulators in development mode
 if (process.env.NODE_ENV === "development") {
-  // Auth emulator
-  connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+  // Dynamically import auth emulator
+  import("firebase/auth").then(({ connectAuthEmulator }) => {
+    connectAuthEmulator(auth, "http://localhost:9099", {
+      disableWarnings: true,
+    });
+  });
 
   // Firestore emulator
-  connectFirestoreEmulator(db, "localhost", 8080);
+  import("firebase/firestore").then(({ connectFirestoreEmulator }) => {
+    connectFirestoreEmulator(db, "localhost", 8080);
+  });
 
   // Functions emulator
-  connectFunctionsEmulator(functions, "localhost", 5001);
+  import("firebase/functions").then(({ connectFunctionsEmulator }) => {
+    connectFunctionsEmulator(functions, "localhost", 5001);
+  });
 
   console.log("Connected to Firebase emulators");
 }

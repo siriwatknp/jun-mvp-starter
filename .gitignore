@@ -48,3 +48,4 @@ certificates
 
 # firebase emulator
 .firebase-local-data
+*adminsdk*.json
