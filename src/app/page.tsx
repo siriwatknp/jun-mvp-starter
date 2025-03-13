@@ -202,7 +202,7 @@ export default function Dashboard() {
           </div>
 
           {/* Authentication Flow Section */}
-          <div className="mt-16">
+          <div className="mt-16 max-w-xl mx-auto">
             <h2 className="text-2xl font-bold text-center mb-6">
               Authentication Flow
             </h2>
