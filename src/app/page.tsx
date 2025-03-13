@@ -148,7 +148,7 @@ export default function Dashboard() {
               Next.js SSG, Line Login, Firebase
             </p>
             <a
-              href="https://github.com/siriwatknp/jun-stack"
+              href="https://github.com/siriwatknp/jun-mvp-starter/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors text-sm font-bold"
