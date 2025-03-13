@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -8,8 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
+import { LogOut, Pencil } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { WelcomeDialog } from "@/components/WelcomeDialog";
 
 export default function Dashboard() {
   const {
@@ -19,10 +21,28 @@ export default function Dashboard() {
     authStatus,
     lineProfile,
     userProfile,
+    isNewUser,
   } = useAuth();
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+  const hasShownWelcomeDialogRef = useRef(false);
   const profile = userProfile || lineProfile;
+
+  // Show welcome dialog when a new user logs in, but only once
+  useEffect(() => {
+    if (isNewUser && userProfile && !hasShownWelcomeDialogRef.current) {
+      setShowWelcomeDialog(true);
+      hasShownWelcomeDialogRef.current = true;
+    }
+  }, [isNewUser, userProfile]);
+
   return (
     <div className="jun-layout jun-layout-noTransition">
+      {/* Welcome Dialog for new users */}
+      <WelcomeDialog
+        open={showWelcomeDialog}
+        onOpenChange={setShowWelcomeDialog}
+      />
+
       <div className="jun-header jun-header-h-[64px] jun-header-clip-left px-4 md:px-4">
         <h1 className="font-bold text-lg">⚡️ Jun MVP Starter</h1>
         <div className="ml-auto">
@@ -79,9 +99,30 @@ export default function Dashboard() {
                 <div className="px-4 py-3">
                   <div className="font-medium">{profile.displayName}</div>
                   {userProfile && (
-                    <div className="text-xs text-gray-500 truncate">
-                      {userProfile.providers?.line?.email || "LINE User"}
-                    </div>
+                    <>
+                      <div className="text-xs text-gray-500 truncate">
+                        {userProfile.providers?.line?.email || "LINE User"}
+                      </div>
+                      {userProfile.description ? (
+                        <button
+                          onClick={() => setShowWelcomeDialog(true)}
+                          className="mt-2 text-sm text-gray-600 italic group flex items-start w-full text-left hover:bg-gray-50 rounded px-1 py-0.5 transition-colors"
+                        >
+                          <Pencil className="h-3.5 w-3.5 mr-1 mt-0.5 text-gray-400 group-hover:text-blue-500 flex-shrink-0" />
+                          <span className="flex-1">
+                            &ldquo;{userProfile.description}&rdquo;
+                          </span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setShowWelcomeDialog(true)}
+                          className="mt-2 text-xs text-blue-500 hover:underline flex items-center"
+                        >
+                          <Pencil className="h-3 w-3 mr-1" />
+                          Add a description
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
                 <DropdownMenuSeparator className="bg-gray-200" />
@@ -98,7 +139,7 @@ export default function Dashboard() {
         </div>
       </div>
       <main className="jun-content">
-        <div className="container max-w-7xl py-8 px-4 2xl:w-full 2xl:max-w-fit 2xl:mx-[128px]">
+        <div className="container mx-auto max-w-7xl py-8 px-4 2xl:w-full 2xl:max-w-fit 2xl:mx-[128px]">
           <div className="flex flex-col items-center text-center mb-12">
             <h2 className="text-3xl font-extrabold mb-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-transparent bg-clip-text">
               Go production in minutes
@@ -107,7 +148,7 @@ export default function Dashboard() {
               Next.js SSG, Line Login, Firebase
             </p>
             <a
-              href="https://github.com/siriwatknp/jun-mvp-starter/"
+              href="https://github.com/siriwatknp/jun-stack"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors text-sm font-bold"
@@ -157,6 +198,86 @@ export default function Dashboard() {
                 Seamless deployment to Firebase hosting with pre-configured
                 settings for a smooth production experience.
               </p>
+            </div>
+          </div>
+
+          {/* Authentication Flow Section */}
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Authentication Flow
+            </h2>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-blue-100 rounded-full p-2 mr-4">
+                    <span className="font-bold text-blue-600">1</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">LIFF Initialization</h3>
+                    <p className="text-gray-600 text-sm">
+                      The app initializes the LINE LIFF SDK and checks if the
+                      user is already logged in.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-green-100 rounded-full p-2 mr-4">
+                    <span className="font-bold text-green-600">2</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">LINE Login</h3>
+                    <p className="text-gray-600 text-sm">
+                      User clicks the login button and is redirected to
+                      LINE&apos;s login page. After successful login,
+                      they&apos;re redirected back with authentication tokens.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-purple-100 rounded-full p-2 mr-4">
+                    <span className="font-bold text-purple-600">3</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Firebase Integration</h3>
+                    <p className="text-gray-600 text-sm">
+                      The app sends the LINE ID token to a Firebase Cloud
+                      Function, which verifies it and creates a Firebase custom
+                      token. It also creates or updates the user&apos;s document
+                      in Firestore.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-yellow-100 rounded-full p-2 mr-4">
+                    <span className="font-bold text-yellow-600">4</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">User Session</h3>
+                    <p className="text-gray-600 text-sm">
+                      The app signs in to Firebase using the custom token and
+                      loads the user profile data from Firestore. Authentication
+                      state is maintained using React context.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 bg-red-100 rounded-full p-2 mr-4">
+                    <span className="font-bold text-red-600">5</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Logout Process</h3>
+                    <p className="text-gray-600 text-sm">
+                      When logging out, the app signs out from both Firebase and
+                      LINE, and the UI is updated to show the login button
+                      again.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

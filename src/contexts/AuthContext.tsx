@@ -40,6 +40,7 @@ type LiffState = "initializing" | "success" | "error";
 
 // Define the shape of the auth context
 type AuthContextType = {
+  isNewUser: boolean;
   login: () => void;
   logout: () => Promise<void>;
   shouldShowLogin: boolean;
@@ -55,6 +56,7 @@ type UserData = {
   uid: string;
   displayName: string;
   pictureUrl?: string;
+  description?: string;
   createdAt: Timestamp;
   lastLogin: Timestamp;
   providers: {
@@ -153,6 +155,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isNewUser, setIsNewUser] = useState(false);
   const { liffState, lineProfile, setLineProfile } = useLineLogin();
   const { authUser, userProfile, setUserProfile, authStatus, setAuthStatus } =
     useObserveFirebaseUser(liffState === "success");
@@ -209,8 +212,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
           // Call Firebase Cloud Function to authenticate with LINE
           const {
-            data: { firebaseToken },
+            data: { firebaseToken, isNewUser },
           } = await authenticateLineUser({ idToken });
+
+          if (isNewUser) {
+            setIsNewUser(isNewUser);
+          }
 
           // Sign in to Firebase with custom token
           // If success, fetching user profile will be handled by Firebase user hook
@@ -243,6 +250,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         authUser,
         authStatus,
         userProfile,
+        isNewUser,
         setAuthStatus,
         setLineProfile,
         setUserProfile,

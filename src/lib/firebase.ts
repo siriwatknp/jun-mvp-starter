@@ -6,7 +6,13 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  DocumentData,
+} from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import type {
   AuthenticateLineUserParams,
@@ -83,6 +89,17 @@ const getUserData = async (uid: string) => {
   }
 };
 
+// Update user data in Firestore
+const updateUserData = async (uid: string, data: DocumentData) => {
+  try {
+    await updateDoc(doc(db, "users", uid), data);
+    return true;
+  } catch (error) {
+    console.error("Error updating user data:", error);
+    return false;
+  }
+};
+
 // Sign out
 const signOut = async () => {
   try {
@@ -101,9 +118,10 @@ const onAuthStateChange = (callback: (user: User | null) => void) => {
 export {
   auth,
   db,
-  authenticateLineUser,
   signInWithToken,
-  getUserData,
   signOut,
   onAuthStateChange,
+  getUserData,
+  updateUserData,
+  authenticateLineUser,
 };

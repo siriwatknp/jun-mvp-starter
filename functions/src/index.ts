@@ -91,7 +91,8 @@ export const authenticateLineUser = onCall(
         });
       }
 
-      // Return token and basic profile info to minimize additional Firestore reads
+      console.log("isNewUser", isNewUser);
+
       return {
         isNewUser,
         firebaseToken,
