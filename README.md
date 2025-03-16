@@ -52,7 +52,13 @@ Before you begin, you'll need to set up the following accounts and services:
    - Create a new provider if you don't have one (click "Create" next to Providers)
    - Enter a provider name and click "Create"
 
-2. Set up LIFF app:
+2. Create a new channel:
+
+   - At the selected provider, click "Create a new channel"
+   - Choose "LINE Login"
+   - Fill in required information and click "Create" at the end of the form
+
+3. Set up LIFF app:
    - In your channel, go to the LIFF tab
    - Click "Add" to create a new LIFF app
    - Enter the following details:
@@ -61,7 +67,7 @@ Before you begin, you'll need to set up the following accounts and services:
      - Endpoint URL: `https://localhost:4416`
      - Scopes: Check "profile" and "openid"
    - Click "Add"
-   - Note your LIFF ID for later use in environment variables
+   - Note your LIFF ID for later use in [environment variables](#environment-variables)
 
 ## Get started
 
