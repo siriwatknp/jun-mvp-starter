@@ -1,7 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { ChevronDown, X } from "lucide-react";
 import { Product, getProducts, getAvailableColors, colorMap } from "./api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 // Skeleton loader component defined outside the main component
 const ProductSkeleton = () => (
@@ -17,8 +31,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [priceSort, setPriceSort] = useState<"low" | "high" | undefined>();
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
-  const [showPriceDropdown, setShowPriceDropdown] = useState(false);
-  const [showColorPopper, setShowColorPopper] = useState(false);
+  const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
   const [availableColors, setAvailableColors] = useState<string[]>([]);
 
   // Load initial colors
@@ -52,31 +65,19 @@ export default function ProductsPage() {
     loadProducts();
   }, [priceSort, selectedColor]);
 
-  const togglePriceDropdown = () => {
-    setShowPriceDropdown(!showPriceDropdown);
-    setShowColorPopper(false);
-  };
-
-  const toggleColorPopper = () => {
-    setShowColorPopper(!showColorPopper);
-    setShowPriceDropdown(false);
-  };
-
-  const handlePriceSelect = (value: "low" | "high") => {
-    setPriceSort(value);
-    setShowPriceDropdown(false);
+  const handlePriceChange = (value: string) => {
+    setPriceSort(value as "low" | "high");
   };
 
   const handleColorSelect = (color: string) => {
     setSelectedColor(color === selectedColor ? undefined : color);
-    setShowColorPopper(false);
+    setColorPopoverOpen(false);
   };
 
   const resetFilters = () => {
     setPriceSort(undefined);
     setSelectedColor(undefined);
-    setShowPriceDropdown(false);
-    setShowColorPopper(false);
+    setColorPopoverOpen(false);
   };
 
   return (
@@ -90,6 +91,7 @@ export default function ProductsPage() {
               className="h-5 w-5 text-blue-500 mr-1"
               viewBox="0 0 20 20"
               fill="currentColor"
+              aria-hidden="true"
             >
               <path
                 fillRule="evenodd"
@@ -104,101 +106,66 @@ export default function ProductsPage() {
 
       {/* Filters */}
       <div className="p-4 grid grid-cols-2 gap-4">
-        {/* Price Filter */}
-        <div className="relative">
-          <button
-            onClick={togglePriceDropdown}
-            className={`w-full flex items-center justify-between px-4 py-2 border ${
-              priceSort ? "border-blue-500" : "border-gray-300"
-            } rounded-lg text-gray-500`}
-          >
-            <span>
-              {priceSort
-                ? `Price: ${
-                    priceSort === "low" ? "Low to High" : "High to Low"
-                  }`
-                : "Price"}
-            </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className={`h-5 w-5 text-gray-400 transition-transform ${
-                showPriceDropdown ? "transform rotate-180" : ""
-              }`}
-              viewBox="0 0 20 20"
-              fill="currentColor"
+        {/* Price Filter using Select */}
+        <div>
+          <Select value={priceSort} onValueChange={handlePriceChange}>
+            <SelectTrigger
+              className={cn(
+                "rounded-lg bg-white border-gray-300",
+                priceSort ? "border-blue-500" : "border-gray-300"
+              )}
             >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          {showPriceDropdown && (
-            <div className="absolute z-10 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200">
-              <ul>
-                <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b"
-                  onClick={() => handlePriceSelect("low")}
-                >
-                  Low to High
-                </li>
-                <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handlePriceSelect("high")}
-                >
-                  High to Low
-                </li>
-              </ul>
-            </div>
-          )}
+              <SelectValue placeholder="Price" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="low">Low to High</SelectItem>
+              <SelectItem value="high">High to Low</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Color Filter */}
-        <div className="relative">
-          <button
-            onClick={toggleColorPopper}
-            className={`w-full flex items-center justify-between px-4 py-2 border ${
-              selectedColor ? "border-blue-500" : "border-gray-300"
-            } rounded-lg text-gray-500`}
-          >
-            <span>{selectedColor ? `Color: ${selectedColor}` : "Color"}</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className={`h-5 w-5 text-gray-400 transition-transform ${
-                showColorPopper ? "transform rotate-180" : ""
-              }`}
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          {showColorPopper && (
-            <div className="absolute z-10 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200 p-3">
+        {/* Color Filter using Popover */}
+        <div>
+          <Popover open={colorPopoverOpen} onOpenChange={setColorPopoverOpen}>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "w-full flex items-center justify-between px-4 py-2 border rounded-lg text-gray-500 h-10",
+                  selectedColor ? "border-blue-500" : "border-gray-300"
+                )}
+                aria-label="Select color"
+              >
+                <span>
+                  {selectedColor ? `Color: ${selectedColor}` : "Color"}
+                </span>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-3" align="start">
               <div className="flex flex-wrap gap-2">
                 {availableColors.map((color) => (
                   <button
                     key={color}
                     onClick={() => handleColorSelect(color)}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border border-gray-300 ${
+                    className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center border border-gray-300",
                       selectedColor === color ? "ring-2 ring-blue-500" : ""
-                    }`}
+                    )}
                     style={{ backgroundColor: colorMap[color] || "#ccc" }}
                     title={color}
+                    aria-label={`Color: ${color}`}
+                    aria-pressed={selectedColor === color}
                   >
                     {selectedColor === color && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className={`h-5 w-5 ${
+                        className={cn(
+                          "h-5 w-5",
                           color === "White" ? "text-black" : "text-white"
-                        }`}
+                        )}
                         viewBox="0 0 20 20"
                         fill="currentColor"
+                        aria-hidden="true"
                       >
                         <path
                           fillRule="evenodd"
@@ -210,8 +177,8 @@ export default function ProductsPage() {
                   </button>
                 ))}
               </div>
-            </div>
-          )}
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
@@ -221,28 +188,20 @@ export default function ProductsPage() {
           <button
             onClick={resetFilters}
             className="text-sm text-blue-500 hover:text-blue-700 flex items-center"
+            aria-label="Reset filters"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X className="h-4 w-4 mr-1" aria-hidden="true" />
             Reset filters
           </button>
         </div>
       )}
 
       {/* Product Grid */}
-      <div className="p-4 grid grid-cols-2 gap-4">
+      <div
+        className="p-4 grid grid-cols-2 gap-4"
+        role="list"
+        aria-label="Products"
+      >
         {loading
           ? Array(6)
               .fill(0)
@@ -251,11 +210,12 @@ export default function ProductsPage() {
               <div
                 key={product.id}
                 className="bg-white rounded-2xl p-3 flex flex-col items-center shadow-sm border border-gray-100"
+                role="listitem"
               >
                 <div className="w-full h-32 bg-gray-100 rounded-xl mb-2 flex items-center justify-center overflow-hidden">
                   <img
                     src={product.imageUrl}
-                    alt={product.name}
+                    alt={`${product.name} in ${product.color}`}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -268,7 +228,9 @@ export default function ProductsPage() {
                 <div
                   className="w-4 h-4 rounded-full mt-1 self-start border border-gray-300"
                   style={{ backgroundColor: colorMap[product.color] || "#ccc" }}
-                  title={product.color}
+                  title={`Color: ${product.color}`}
+                  aria-label={`Color: ${product.color}`}
+                  role="presentation"
                 ></div>
               </div>
             ))}
