@@ -112,7 +112,8 @@ export default function ProductsPage() {
             <SelectTrigger
               className={cn(
                 "rounded-lg bg-white border-gray-300",
-                priceSort ? "border-blue-500" : "border-gray-300"
+                priceSort ? "border-blue-500" : "border-gray-300",
+                "focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
               )}
             >
               <SelectValue placeholder="Price" />
@@ -131,7 +132,8 @@ export default function ProductsPage() {
               <button
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-2 border rounded-lg text-gray-500 h-10",
-                  selectedColor ? "border-blue-500" : "border-gray-300"
+                  selectedColor ? "border-blue-500" : "border-gray-300",
+                  "focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 )}
                 aria-label="Select color"
               >
@@ -149,7 +151,8 @@ export default function ProductsPage() {
                     onClick={() => handleColorSelect(color)}
                     className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center border border-gray-300",
-                      selectedColor === color ? "ring-2 ring-blue-500" : ""
+                      selectedColor === color ? "ring-2 ring-blue-500" : "",
+                      "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                     )}
                     style={{ backgroundColor: colorMap[color] || "#ccc" }}
                     title={color}
@@ -187,7 +190,7 @@ export default function ProductsPage() {
         <div className="px-4 pb-2 -mt-2 flex justify-end">
           <button
             onClick={resetFilters}
-            className="text-sm text-blue-500 hover:text-blue-700 flex items-center"
+            className="text-sm text-blue-500 hover:text-blue-700 flex items-center rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             aria-label="Reset filters"
           >
             <X className="h-4 w-4 mr-1" aria-hidden="true" />
