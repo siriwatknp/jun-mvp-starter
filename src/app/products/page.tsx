@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
-import { Product, getProducts, getAvailableColors, colorMap } from "./api";
+import { colorMap } from "./api";
+import { useProducts, useAvailableColors } from "./hooks";
 import {
   Select,
   SelectContent,
@@ -27,43 +28,22 @@ const ProductSkeleton = () => (
 );
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [priceSort, setPriceSort] = useState<"low" | "high" | undefined>();
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
   const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
-  const [availableColors, setAvailableColors] = useState<string[]>([]);
 
-  // Load initial colors
-  useEffect(() => {
-    const loadColors = async () => {
-      try {
-        const colors = await getAvailableColors();
-        setAvailableColors(colors);
-      } catch (error) {
-        console.error("Error fetching colors:", error);
-      }
-    };
+  // Use TanStack Query hooks instead of direct API calls
+  const {
+    data: products = [],
+    isLoading: productsLoading,
+    isFetching: productsFetching,
+  } = useProducts(priceSort, selectedColor);
 
-    loadColors();
-  }, []);
+  const { data: availableColors = [], isLoading: colorsLoading } =
+    useAvailableColors();
 
-  // Load products when filters change
-  useEffect(() => {
-    const loadProducts = async () => {
-      setLoading(true);
-      try {
-        const data = await getProducts(priceSort, selectedColor);
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, [priceSort, selectedColor]);
+  // Display loading when fetching initial data or when switching between filters
+  const loading = productsLoading || productsFetching;
 
   const handlePriceChange = (value: string) => {
     setPriceSort(value as "low" | "high");
@@ -136,6 +116,7 @@ export default function ProductsPage() {
                   "focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 )}
                 aria-label="Select color"
+                disabled={colorsLoading}
               >
                 <span>
                   {selectedColor ? `Color: ${selectedColor}` : "Color"}
