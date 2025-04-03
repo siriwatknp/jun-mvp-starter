@@ -1,0 +1,9 @@
+---
+description: The pattern of the written code
+globs: 
+alwaysApply: true
+---
+- Focus on simplicity and readability, over being performant.
+- Prefer simplicity and duplication. Abstract into small functions on 3rd duplication but ask me first.
+- Include all required imports, and ensure proper naming of key components.
+- The imports should alphabetically order but React should come first.
