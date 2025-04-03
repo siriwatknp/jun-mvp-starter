@@ -23,12 +23,11 @@ Prefer using function directly instead of creating new function inside component
 
 ```tsx
 function Component({ onClick }) {
-
   function handleClick() {
-    onClick?.()
+    onClick?.();
   }
-  
-  return <button onClick={handleClick}>...</button>
+
+  return <button onClick={handleClick}>...</button>;
 }
 ```
 
@@ -53,8 +52,28 @@ function LoginButton({ size, icon, children, ...props }) {
 }
 ```
 
+- DO NOT Create a component within a component
+
+```tsx
+function Products() {
+  const ProductSkeleton = () => (
+    <div className="bg-white rounded-2xl p-3 flex flex-col items-center shadow-sm border border-gray-100 animate-pulse">
+      <div className="w-full h-32 bg-gray-200 rounded-xl mb-2"></div>
+      <div className="w-2/3 h-4 bg-gray-200 rounded mt-1 mb-1"></div>
+      <div className="w-1/3 h-4 bg-gray-200 rounded"></div>
+    </div>
+  );
+
+  return <ProductSkeleton key={index} />;
+}
+```
+
+## useEffect hook
+
+Declare async function within `useEffect` and call it directly if the function is not reused eleswhere.
+
 ## TypeScript
 
 - Prefer `interface` over `type` if possible for component props
 - For props spread to the root element, include `JSX.intrinsicElement` of the root element too.
-- Write the description/purpose above each field of the type. 
+- Write the description/purpose above each field of the type.
