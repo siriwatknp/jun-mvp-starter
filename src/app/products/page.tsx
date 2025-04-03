@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 import { colorMap } from "./api";
 import { useProducts, useAvailableColors } from "./hooks";
+import { ProductSkeleton } from "@/components/product-skeleton";
 import {
   Select,
   SelectContent,
@@ -18,17 +19,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-// Skeleton loader component defined outside the main component
-const ProductSkeleton = () => (
-  <div className="bg-white rounded-2xl p-3 flex flex-col items-center shadow-sm border border-gray-100 animate-pulse">
-    <div className="w-full h-32 bg-gray-200 rounded-xl mb-2"></div>
-    <div className="w-2/3 h-4 bg-gray-200 rounded mt-1 mb-1"></div>
-    <div className="w-1/3 h-4 bg-gray-200 rounded"></div>
-  </div>
-);
-
 export default function ProductsPage() {
-  const [priceSort, setPriceSort] = useState<"low" | "high" | undefined>();
+  const [priceSort, setPriceSort] = useState<"low" | "high" | "none">("none");
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
   const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
 
@@ -37,7 +29,7 @@ export default function ProductsPage() {
     data: products = [],
     isLoading: productsLoading,
     isFetching: productsFetching,
-  } = useProducts(priceSort, selectedColor);
+  } = useProducts(priceSort === "none" ? undefined : priceSort, selectedColor);
 
   const { data: availableColors = [], isLoading: colorsLoading } =
     useAvailableColors();
@@ -46,7 +38,7 @@ export default function ProductsPage() {
   const loading = productsLoading || productsFetching;
 
   const handlePriceChange = (value: string) => {
-    setPriceSort(value as "low" | "high");
+    setPriceSort(value as "low" | "high" | "none");
   };
 
   const handleColorSelect = (color: string) => {
@@ -55,7 +47,7 @@ export default function ProductsPage() {
   };
 
   const resetFilters = () => {
-    setPriceSort(undefined);
+    setPriceSort("none");
     setSelectedColor(undefined);
     setColorPopoverOpen(false);
   };
@@ -92,13 +84,14 @@ export default function ProductsPage() {
             <SelectTrigger
               className={cn(
                 "rounded-lg bg-white border-gray-300",
-                priceSort ? "border-blue-500" : "border-gray-300",
+                priceSort !== "none" ? "border-blue-500" : "border-gray-300",
                 "focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
               )}
             >
               <SelectValue placeholder="Price" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="none">No Sorting</SelectItem>
               <SelectItem value="low">Low to High</SelectItem>
               <SelectItem value="high">High to Low</SelectItem>
             </SelectContent>
@@ -167,7 +160,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Reset Filters */}
-      {(priceSort || selectedColor) && (
+      {(priceSort !== "none" || selectedColor) && (
         <div className="px-4 pb-2 -mt-2 flex justify-end">
           <button
             onClick={resetFilters}
