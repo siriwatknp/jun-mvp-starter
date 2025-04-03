@@ -1,0 +1,10 @@
+---
+description: Rules for using Tanstack Query
+globs: 
+alwaysApply: true
+---
+## TanStack Query
+
+- Use string literals directly in the useQuery hooks for queryKey, avoid abstracting them into separate objects or constants.
+- Keep query keys simple, using an array with a prefix string and an object for parameters.
+- Only refactor duplicated query keys when the same exact query is used in 3+ places, and even then, ask first.
