@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
-import { colorMap } from "./api";
+import { colorMap, Product } from "./api";
 import { useProducts, useAvailableColors } from "./hooks";
 import { ProductSkeleton } from "@/components/product-skeleton";
+import { ProductDrawer } from "@/components/product-drawer";
 import {
   Select,
   SelectContent,
@@ -23,6 +24,8 @@ export default function ProductsPage() {
   const [priceSort, setPriceSort] = useState<"low" | "high" | "none">("none");
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
   const [colorPopoverOpen, setColorPopoverOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Use TanStack Query hooks instead of direct API calls
   const {
@@ -50,6 +53,11 @@ export default function ProductsPage() {
     setPriceSort("none");
     setSelectedColor(undefined);
     setColorPopoverOpen(false);
+  };
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setDrawerOpen(true);
   };
 
   return (
@@ -186,7 +194,8 @@ export default function ProductsPage() {
           : products.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-2xl p-3 flex flex-col items-center shadow-sm border border-gray-100"
+                className="bg-white rounded-2xl p-3 flex flex-col items-center shadow-sm border border-gray-100 cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => handleProductClick(product)}
                 role="listitem"
               >
                 <div className="w-full h-32 bg-gray-100 rounded-xl mb-2 flex items-center justify-center overflow-hidden">
@@ -209,9 +218,21 @@ export default function ProductsPage() {
                   aria-label={`Color: ${product.color}`}
                   role="presentation"
                 ></div>
+                {!product.inStock && (
+                  <div className="mt-2 px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded-full">
+                    Out of Stock
+                  </div>
+                )}
               </div>
             ))}
       </div>
+
+      {/* Product Detail Drawer */}
+      <ProductDrawer
+        product={selectedProduct}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+      />
     </div>
   );
 }
