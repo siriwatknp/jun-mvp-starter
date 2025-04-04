@@ -1,6 +1,6 @@
 {
   "name": "functions",
-  "description": "Firebase Cloud Functions for Familee",
+  "description": "Firebase Cloud Functions",
   "type": "module",
   "scripts": {
     "build": "tsc",
