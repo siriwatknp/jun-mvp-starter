@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --experimental-https -p 4416",
+    "dev": "next dev -p 4416",
     "build": "next build",
     "build:functions": "cd functions && npm run build",
     "start": "next start",
