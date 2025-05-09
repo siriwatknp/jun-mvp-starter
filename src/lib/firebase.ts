@@ -14,6 +14,7 @@ import {
   DocumentData,
 } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import type {
   AuthenticateLineUserParams,
   AuthenticateLineUserResult,
@@ -32,6 +33,22 @@ const firebaseConfig = {
 // Initialize Firebase
 const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
+if (
+  typeof document !== "undefined" &&
+  process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY
+) {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider(
+      process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY
+    ),
+
+    // Optional argument. If true, the SDK automatically refreshes App Check
+    // tokens as needed.
+    isTokenAutoRefreshEnabled: true,
+  });
+}
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 const functions = getFunctions(app, "asia-southeast1");
