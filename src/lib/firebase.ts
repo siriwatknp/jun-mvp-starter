@@ -14,7 +14,10 @@ import {
   DocumentData,
 } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} from "firebase/app-check";
 import type {
   AuthenticateLineUserParams,
   AuthenticateLineUserResult,
@@ -39,7 +42,7 @@ if (
   process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY
 ) {
   initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider(
+    provider: new ReCaptchaEnterpriseProvider(
       process.env.NEXT_PUBLIC_FIREBASE_APP_CHECK_KEY
     ),
 
